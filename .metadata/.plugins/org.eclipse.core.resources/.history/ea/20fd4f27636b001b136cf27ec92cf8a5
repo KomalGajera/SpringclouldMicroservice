@@ -1,0 +1,8 @@
+package com.example.orderservice.controller;
+
+import org.springframework.cloud.openfeign.FeignClient;
+
+@FeignClient(name="stock-service",url = "http://localhost:8083")
+public interface StockInterface {
+
+}

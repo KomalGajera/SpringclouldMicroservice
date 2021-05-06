@@ -1,0 +1,21 @@
+package com.example.orderservice;
+
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.cloud.client.circuitbreaker.EnableCircuitBreaker;
+import org.springframework.cloud.openfeign.EnableFeignClients;
+
+import com.example.orderservice.controller.PaymentFallback;
+
+@SpringBootApplication
+@EnableCircuitBreaker
+@EnableAutoConfiguration(exclude = PaymentFallback.class)
+@EnableFeignClients
+public class OrderserviceApplication {
+
+	public static void main(String[] args) {
+		SpringApplication.run(OrderserviceApplication.class, args);
+	}
+
+}

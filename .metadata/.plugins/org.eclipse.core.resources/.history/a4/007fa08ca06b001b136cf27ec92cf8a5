@@ -1,0 +1,23 @@
+package com.example.orderservice.controller;
+
+
+
+import com.example.orderservice.model.Payment;
+
+public class PaymentFallback implements PaymentInterface {
+
+	@Override
+	public Payment updatePaymentDetail(Payment payment) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public void deletePayment(Long id) {
+		// TODO Auto-generated method stub
+		
+	}
+
+
+
+}

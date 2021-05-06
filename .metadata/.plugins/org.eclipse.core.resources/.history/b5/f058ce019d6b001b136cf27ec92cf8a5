@@ -1,0 +1,94 @@
+package com.example.orderservice.controller;
+
+import javax.validation.Valid;
+
+import org.modelmapper.ModelMapper;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.MessageSource;
+import org.springframework.context.i18n.LocaleContextHolder;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.client.RestTemplate;
+
+import com.example.orderservice.dto.APIResponse;
+import com.example.orderservice.dto.OrderRequestDto;
+import com.example.orderservice.model.Delivery;
+import com.example.orderservice.model.Order;
+import com.example.orderservice.model.Payment;
+import com.example.orderservice.model.Stock;
+import com.example.orderservice.service.OrderService;
+import com.example.orderservice.util.ApplicationConstants.DeliveryStatus;
+import com.example.orderservice.util.ApplicationConstants.OrderStatus;
+import com.example.orderservice.util.ApplicationConstants.PaymentStatus;
+
+@RestController
+@RequestMapping("/order")
+@Validated
+@Transactional
+public class OrderController {
+
+	@Autowired
+	OrderService orderService;
+
+	@Autowired
+	private MessageSource messages;
+
+	@Autowired
+	private RestTemplate restTemplate;
+
+	@Autowired
+	private ModelMapper modelMapper;
+
+	@Autowired
+	private StockInterface stockImpl;
+
+	@Autowired
+	private DeliveryInterface deliveryImpl;
+
+	@Autowired
+	private PaymentInterface paymentImplement;
+
+	@PostMapping(value = "/save")
+	public ResponseEntity<APIResponse> saveOrder(@Valid @RequestBody OrderRequestDto order) {
+
+		Stock oldstock, finalstock;
+		Payment payment = null;
+		Order orderDetail;
+		String message;
+		Boolean isStockAvailable = stockImpl.checkStockById(order.getStockId(), order.getQuantity());
+
+		if (isStockAvailable) {
+			Order finalOrder = modelMapper.map(order, Order.class);
+			finalOrder.setStatus(OrderStatus.NEW);
+			orderDetail = orderService.save(finalOrder);
+			oldstock = stockImpl.getStockById(orderDetail.getStockId());
+			try {
+
+				finalstock = stockImpl.updateStock(new Stock(orderDetail.getStockId(), orderDetail.getQuantity()));
+				payment = paymentImplement.updatePaymentDetail(
+						new Payment(null, orderDetail.getId(), orderDetail.getValue(), PaymentStatus.BILLED));
+				if (payment == null)
+					throw new Exception();
+				deliveryImpl.savedelivery(new Delivery(null, finalstock.getId(), orderDetail.getId(), payment.getId(),
+						DeliveryStatus.DELIVER));
+			} catch (Exception e) {
+				System.out.println("Call fallback method");
+				Long id = (payment.getId() == null) ? 0l : payment.getId();
+				stockImpl.save(oldstock);
+				paymentImplement.deletePayment(id);
+			}
+			message = "order save successfully";
+		} else {
+			message = "out of stock";
+		}
+		return ResponseEntity.status(HttpStatus.OK).body(new APIResponse(HttpStatus.OK.value(), true,
+				messages.getMessage(message, null, LocaleContextHolder.getLocale()), null));
+	}
+
+}

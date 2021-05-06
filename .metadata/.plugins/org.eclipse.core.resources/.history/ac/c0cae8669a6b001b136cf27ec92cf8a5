@@ -1,0 +1,28 @@
+package com.example.orderservice.controller;
+
+import org.springframework.stereotype.Component;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+
+import com.example.orderservice.model.Payment;
+
+@Component
+public class PaymentFallback{
+
+	
+	@PostMapping(value = "/updatepayment")
+	public Payment updatePaymentDetail(Payment payment) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	
+	@DeleteMapping(value = "/deletepayment")
+	public void deletePayment(Long id) {
+		// TODO Auto-generated method stub
+		
+	}
+
+
+
+}

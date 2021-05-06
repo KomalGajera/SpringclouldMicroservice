@@ -1,0 +1,20 @@
+package com.example.orderservice.controller;
+
+import java.math.BigDecimal;
+
+import org.springframework.cloud.openfeign.FeignClient;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+
+import com.example.orderservice.model.Payment;
+
+
+@FeignClient(name="payment-service",url = "http://localhost:8082")
+@RequestMapping("/payment")
+public interface PaymentInterface {
+	
+	@GetMapping(value = "/updatepayment/{orderid}/{amount}")
+	public Payment updatePaymentDetail(@PathVariable("orderid") Long id, @PathVariable("amount") BigDecimal amount);
+
+}

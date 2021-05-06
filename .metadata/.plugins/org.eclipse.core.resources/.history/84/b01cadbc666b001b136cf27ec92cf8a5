@@ -1,0 +1,70 @@
+package com.example.stockservice.controller;
+
+import javax.validation.Valid;
+
+import org.modelmapper.ModelMapper;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.MessageSource;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+import com.example.stockservice.model.Stock;
+import com.example.stockservice.service.StockService;
+
+@RestController
+@RequestMapping("/stock")
+@Transactional
+@Valid
+public class StockController {
+
+	@Autowired
+	private StockService stockService;
+
+	@Autowired
+	private MessageSource messages;
+
+	@Autowired
+	ModelMapper mapper;
+
+	@GetMapping(value = "/updatestockbyid/{stockid}/{Quantity}")
+	public Stock getStockById(@PathVariable("stockid") Long id, @PathVariable("Quantity") Long quantity) {
+
+		Stock stock = stockService.findByIdAndQuantity(id, quantity);
+		return stock;
+	}
+
+	@PostMapping(value = "/update")
+	public Stock save(@RequestBody Stock stock) {
+		return stockService.save(stock);
+
+	}
+
+	/*
+	 * @GetMapping(value = "/updatestockbyid/{stockid}/{Quantity}") public
+	 * ResponseEntity<APIResponse> getStockById(@PathVariable("stockid") Long id,
+	 * 
+	 * @PathVariable("Quantity") Long quantity) {
+	 * 
+	 * Stock stock = stockService.findByIdAndQuantity(id, quantity); return
+	 * ResponseEntity.status(HttpStatus.OK).body(new
+	 * APIResponse(HttpStatus.OK.value(), true,
+	 * messages.getMessage("stock is available", null,
+	 * LocaleContextHolder.getLocale()), stock)); }
+	 */
+
+	/*
+	 * @PostMapping(value = "/update") public ResponseEntity<APIResponse>
+	 * save(@RequestBody @Validated Stock stock) { stockService.save(stock); return
+	 * ResponseEntity.status(HttpStatus.OK).body(new
+	 * APIResponse(HttpStatus.OK.value(), true,
+	 * messages.getMessage("stock update sucess fully", null,
+	 * LocaleContextHolder.getLocale()), null)); }
+	 */
+
+}

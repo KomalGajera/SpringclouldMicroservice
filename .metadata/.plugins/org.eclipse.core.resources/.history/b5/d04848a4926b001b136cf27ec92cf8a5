@@ -1,0 +1,11 @@
+package com.example.orderservice.controller;
+
+import org.springframework.web.bind.annotation.RequestBody;
+
+import com.example.orderservice.model.Payment;
+
+public interface sample {
+	
+	public Payment updatePaymentDetail(@RequestBody Payment payment);
+
+}

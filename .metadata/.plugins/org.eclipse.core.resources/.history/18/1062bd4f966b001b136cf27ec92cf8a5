@@ -1,0 +1,13 @@
+package com.example.orderservice.controller;
+
+import com.example.orderservice.model.Payment;
+
+public class PaymentFallback implements sample {
+
+	public Payment updatePaymentDetail(Payment payment) {
+		// TODO Auto-generated method stub
+		System.out.println("\n\n\nfallback method call..");
+		return null;
+	}
+
+}

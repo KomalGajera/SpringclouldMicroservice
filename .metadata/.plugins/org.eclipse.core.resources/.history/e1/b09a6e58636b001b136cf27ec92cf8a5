@@ -1,0 +1,15 @@
+package com.example.orderservice.controller;
+
+import org.springframework.cloud.openfeign.FeignClient;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+
+
+@FeignClient(name="stock-service",url = "http://localhost:8083")
+public interface StockInterface {
+	
+	@GetMapping(value = "/updatestockbyid/{stockid}/{Quantity}")
+	public Stock getStockById(@PathVariable("stockid") Long id,
+			@PathVariable("Quantity") Long quantity);
+
+}

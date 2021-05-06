@@ -1,0 +1,10 @@
+spring:
+  rabbitmq:
+    port: 5672
+  cloud:
+    stream:
+      bindings:
+        output:
+          destination: orders-out
+        input:
+          destination: orders-in
